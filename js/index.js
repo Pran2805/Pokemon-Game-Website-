@@ -1,4 +1,3 @@
-
 for (let i = 0; i < collisions.length; i += 70) {
   collisionsMap.push(collisions.slice(i, i + 70))
 }
@@ -37,30 +36,13 @@ battleZonesMap.forEach((row, i) => {
   })
 })
 
-const image = new Image()
-image.src = '../tile_assets/Pellet Town.png'
-
-const foregroundImage = new Image()
-foregroundImage.src = '../tile_assets/ForegroundObject.png'
-
-const playerUp = new Image()
-playerUp.src = '../assets/Images/playerUp.png'
-
-const playerDown = new Image()
-playerDown.src = '../assets/Images/playerDown.png'
-
-const playerRight = new Image()
-playerRight.src = '../assets/Images/playerRight.png'
-
-const playerLeft = new Image()
-playerLeft.src = '../assets/Images/playerLeft.png'
-
 let imagesLoaded = 0
 
 function checkAllImagesLoaded() {
   imagesLoaded++
   if (imagesLoaded === 2 && player) {
-    animate()
+    // animate()
+    animateBattle() // comment out after testing
   }
 }
 
@@ -78,9 +60,37 @@ const foreground = new Sprite({
   },
   image: foregroundImage
 })
-
-
-
+const emby = new Sprite({
+  position:{
+    x: 280,
+    y: 325
+  }, 
+  image: embyImage,
+  frames:{
+    max: 4,
+    hold: 30
+  },
+  animate: true
+})
+const draggle = new Sprite({
+  position:{
+    x: 800,
+    y: 100
+  }, 
+  image: draggleImage,
+  frames:{
+    max: 4,
+    hold: 30
+  },
+  animate: true
+})
+const battleBackground = new Sprite({
+  position: {
+    x: 0,
+    y: 0
+  },
+  image: battleBackgroundImage
+})
 let player = null
 
 playerDown.onload = () => {
@@ -101,6 +111,7 @@ image.onload = checkAllImagesLoaded
 
 const movables = [background, ...boundaries, foreground, ...battleZones]
 
+// can't move his function in function.js
 const battleZoneAreaDetect = (animationId) => {
   for (let i = 0; i < battleZones.length; i++) {
     const battleZone = battleZones[i]
@@ -151,14 +162,14 @@ function animate() {
   }
 
   foreground.draw(context)
-  player.moving = false
+  player.animate = false
 
   if (battle.initated) return
   if (keys.w.pressed) {
     let moving = true
     player.image = playerUp
     for (let i = 0; i < boundaries.length; i++) {
-      player.moving = true
+      player.animate = true
       const boundary = boundaries[i]
       if (
         collisionRect({
@@ -185,7 +196,7 @@ function animate() {
     let moving = true
     player.image = playerDown
     for (let i = 0; i < boundaries.length; i++) {
-      player.moving = true
+      player.animate = true
       const boundary = boundaries[i]
       if (
         collisionRect({
@@ -212,7 +223,7 @@ function animate() {
     let moving = true
     player.image = playerLeft
     for (let i = 0; i < boundaries.length; i++) {
-      player.moving = true
+      player.animate = true
       const boundary = boundaries[i]
       if (
         collisionRect({
@@ -239,7 +250,7 @@ function animate() {
     let moving = true
     player.image = playerRight
     for (let i = 0; i < boundaries.length; i++) {
-      player.moving = true
+      player.animate = true
       const boundary = boundaries[i]
       if (
         collisionRect({
@@ -263,27 +274,17 @@ function animate() {
       movables.forEach(m => (m.position.x -= speed))
     }
   }
-
 }
 
-const battleBackgroundImage = new Image()
-battleBackgroundImage.src = "../assets/Images/battleBackground.png"
 
 function animateBattle() {
   window.requestAnimationFrame(animateBattle)
 
-  const battleBackground = new Sprite({
-    position: {
-      x: 0,
-      y: 0
-    },
-    image: battleBackgroundImage
-  })
-
-
   // Clear or fill canvas if needed
   context.clearRect(0, 0, canvas.width, canvas.height);
   battleBackground.draw(context)
+  draggle.draw(context)
+  emby.draw(context)
 }
 
 window.addEventListener('keydown', (e) => {
@@ -311,4 +312,3 @@ window.addEventListener('keyup', (e) => {
     case 'ArrowRight': keys.d.pressed = false; break
   }
 })
-
