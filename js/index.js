@@ -1,7 +1,3 @@
-const canvas = document.querySelector('canvas')
-const context = canvas.getContext('2d')
-canvas.width = 1024
-canvas.height = 576
 
 for (let i = 0; i < collisions.length; i += 70) {
   collisionsMap.push(collisions.slice(i, i + 70))
@@ -105,7 +101,7 @@ image.onload = checkAllImagesLoaded
 
 const movables = [background, ...boundaries, foreground, ...battleZones]
 
-const battleZoneAreaDetect = () => {
+const battleZoneAreaDetect = (animationId) => {
   for (let i = 0; i < battleZones.length; i++) {
     const battleZone = battleZones[i]
     const overlappingArea = (Math.min(player.position.x + player.width, battleZone.position.x + battleZone.width) -
@@ -116,16 +112,28 @@ const battleZoneAreaDetect = () => {
       collisionRect({
         player: player,
         testBoundary: battleZone
-      }) &&
-      overlappingArea > (player.width * player.height) / 2
+      })
+      && overlappingArea > (player.width * player.height) / 2
+      && Math.random() < 0.05
     ) {
-      console.log('battle zone')
+      battle.initated = true
+      window.cancelAnimationFrame(animationId)
+      innerDiv.classList.add('blink')
+
+      setTimeout(() => {
+        innerDiv.classList.remove('blink');
+        // Now activate the battle
+        animateBattle();
+      }, 5000);
+
       break
     }
   }
 }
+
 function animate() {
-  requestAnimationFrame(animate)
+  const animationId = requestAnimationFrame(animate)
+  console.log(animationId)
   context.clearRect(0, 0, canvas.width, canvas.height)
 
   background.draw(context)
@@ -145,6 +153,7 @@ function animate() {
   foreground.draw(context)
   player.moving = false
 
+  if (battle.initated) return
   if (keys.w.pressed) {
     let moving = true
     player.image = playerUp
@@ -167,7 +176,7 @@ function animate() {
         break
       }
     }
-    battleZoneAreaDetect()
+    battleZoneAreaDetect(animationId)
 
     if (moving) {
       movables.forEach(m => (m.position.y += speed))
@@ -195,7 +204,7 @@ function animate() {
       }
     }
 
-    battleZoneAreaDetect()
+    battleZoneAreaDetect(animationId)
     if (moving) {
       movables.forEach(m => (m.position.y -= speed))
     }
@@ -222,7 +231,7 @@ function animate() {
       }
     }
 
-    battleZoneAreaDetect()
+    battleZoneAreaDetect(animationId)
     if (moving) {
       movables.forEach(m => (m.position.x += speed))
     }
@@ -249,12 +258,32 @@ function animate() {
       }
     }
 
-    battleZoneAreaDetect()
+    battleZoneAreaDetect(animationId)
     if (moving) {
       movables.forEach(m => (m.position.x -= speed))
     }
   }
 
+}
+
+const battleBackgroundImage = new Image()
+battleBackgroundImage.src = "../assets/Images/battleBackground.png"
+
+function animateBattle() {
+  window.requestAnimationFrame(animateBattle)
+
+  const battleBackground = new Sprite({
+    position: {
+      x: 0,
+      y: 0
+    },
+    image: battleBackgroundImage
+  })
+
+
+  // Clear or fill canvas if needed
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  battleBackground.draw(context)
 }
 
 window.addEventListener('keydown', (e) => {

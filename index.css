@@ -1,5 +1,5 @@
 body, html{
-    background-color: black;
+    background-color: burlywood;
     margin: 0;
     padding: 0;
     height: 100%;
@@ -11,4 +11,31 @@ body, html{
 canvas {
   display: block;
   background-color: #000;
+}
+#outer-div{
+  display: inline-block;
+}#inner-div {
+  position: absolute;
+  background-color: black;
+  width: 1024px;
+  height: 576px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+.blink {
+  display: block;
+  animation: blink 1.3s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
