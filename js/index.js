@@ -1,10 +1,8 @@
-// ===== Canvas Setup =====
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 canvas.width = 1024
 canvas.height = 576
 
-// ===== Collisions Mapping =====
 const collisionsMap = []
 for (let i = 0; i < collisions.length; i += 70) {
   collisionsMap.push(collisions.slice(i, i + 70))
@@ -34,12 +32,15 @@ const collisionRect = ({ player, testBoundary }) => {
     player.position.y <= testBoundary.position.y + testBoundary.height
   )
 }
-// ===== Load Images =====
+
 const image = new Image()
 image.src = '../tile_assets/Pellet Town.png'
 
 const playerImage = new Image()
 playerImage.src = '../assets/Images/playerDown.png'
+
+const foregroundImage = new Image()
+foregroundImage.src = '../tile_assets/ForegroundObject.png'
 
 let imagesLoaded = 0
 function checkAllImagesLoaded() {
@@ -49,7 +50,6 @@ function checkAllImagesLoaded() {
   }
 }
 
-// ===== Background Sprite =====
 const background = new Sprite({
   position: {
     x: mapPosWidth,
@@ -57,16 +57,16 @@ const background = new Sprite({
   },
   image: image
 })
-
-// ===== Test Boundary (Optional) =====
-const testBoundary = new Boundary({
+const foreground = new Sprite({
   position: {
-    x: 400,
-    y: 400
-  }
+    x: mapPosWidth,
+    y: mapPosHeight
+  },
+  image: foregroundImage
 })
 
-// ===== Player Setup =====
+
+
 let player = null
 
 playerImage.onload = () => {
@@ -85,9 +85,8 @@ playerImage.onload = () => {
 
 image.onload = checkAllImagesLoaded
 
-const movables = [background, ...boundaries]
+const movables = [background, ...boundaries, foreground]
 
-// ===== Keys =====
 const keys = {
   w: { pressed: false },
   a: { pressed: false },
@@ -95,13 +94,11 @@ const keys = {
   d: { pressed: false }
 }
 
-// ===== Animation Loop =====
 function animate() {
   requestAnimationFrame(animate)
   context.clearRect(0, 0, canvas.width, canvas.height)
 
   background.draw(context)
-  // testBoundary.draw(context)
   boundaries.forEach(boundary => {
     boundary.draw(context)
     if (collisionRect({ player, testBoundary: boundary })) {
@@ -113,6 +110,7 @@ function animate() {
     player.draw(context)
   }
 
+  foreground.draw(context)
  if (keys.w.pressed) {
   let moving = true
   for (let i = 0; i < boundaries.length; i++) {
@@ -215,7 +213,6 @@ if (keys.d.pressed) {
 
 }
 
-// ===== Keyboard Events =====
 window.addEventListener('keydown', (e) => {
   switch (e.key) {
     case 'w': keys.w.pressed = true; break
