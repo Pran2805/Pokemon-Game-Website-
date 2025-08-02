@@ -3,12 +3,14 @@ const context = canvas.getContext('2d')
 canvas.width = 1024
 canvas.height = 576
 
-const collisionsMap = []
 for (let i = 0; i < collisions.length; i += 70) {
   collisionsMap.push(collisions.slice(i, i + 70))
 }
 
-const boundaries = []
+for (let i = 0; i < battleZonesData.length; i += 70) {
+  battleZonesMap.push(battleZonesData.slice(i, i + 70))
+}
+
 collisionsMap.forEach((row, i) => {
   row.forEach((symbol, j) => {
     if (symbol === 1025) {
@@ -24,14 +26,20 @@ collisionsMap.forEach((row, i) => {
   })
 })
 
-const collisionRect = ({ player, testBoundary }) => {
-  return (
-    player.position.x + player.width >= testBoundary.position.x &&
-    player.position.x <= testBoundary.position.x + testBoundary.width &&
-    player.position.y + player.height >= testBoundary.position.y &&
-    player.position.y <= testBoundary.position.y + testBoundary.height
-  )
-}
+battleZonesMap.forEach((row, i) => {
+  row.forEach((symbol, j) => {
+    if (symbol === 1025) {
+      battleZones.push(
+        new Boundary({
+          position: {
+            x: j * 48 + mapPosWidth,
+            y: i * 48 + mapPosHeight
+          }
+        })
+      )
+    }
+  })
+})
 
 const image = new Image()
 image.src = '../tile_assets/Pellet Town.png'
@@ -52,6 +60,7 @@ const playerLeft = new Image()
 playerLeft.src = '../assets/Images/playerLeft.png'
 
 let imagesLoaded = 0
+
 function checkAllImagesLoaded() {
   imagesLoaded++
   if (imagesLoaded === 2 && player) {
@@ -94,15 +103,27 @@ playerDown.onload = () => {
 
 image.onload = checkAllImagesLoaded
 
-const movables = [background, ...boundaries, foreground]
+const movables = [background, ...boundaries, foreground, ...battleZones]
 
-const keys = {
-  w: { pressed: false },
-  a: { pressed: false },
-  s: { pressed: false },
-  d: { pressed: false }
+const battleZoneAreaDetect = () => {
+  for (let i = 0; i < battleZones.length; i++) {
+    const battleZone = battleZones[i]
+    const overlappingArea = (Math.min(player.position.x + player.width, battleZone.position.x + battleZone.width) -
+      Math.max(player.position.x, battleZone.position.x)) *
+      (Math.min(player.position.y + player.height, battleZone.position.y + battleZone.height) -
+        Math.max(player.position.y, battleZone.position.y))
+    if (
+      collisionRect({
+        player: player,
+        testBoundary: battleZone
+      }) &&
+      overlappingArea > (player.width * player.height) / 2
+    ) {
+      console.log('battle zone')
+      break
+    }
+  }
 }
-
 function animate() {
   requestAnimationFrame(animate)
   context.clearRect(0, 0, canvas.width, canvas.height)
@@ -112,12 +133,18 @@ function animate() {
     boundary.draw(context)
   })
 
+
+  battleZones.forEach(battleZone => {
+    battleZone.draw(context)
+  })
+
   if (player) {
     player.draw(context)
   }
 
   foreground.draw(context)
   player.moving = false
+
   if (keys.w.pressed) {
     let moving = true
     player.image = playerUp
@@ -140,6 +167,8 @@ function animate() {
         break
       }
     }
+    battleZoneAreaDetect()
+
     if (moving) {
       movables.forEach(m => (m.position.y += speed))
     }
@@ -165,6 +194,8 @@ function animate() {
         break
       }
     }
+
+    battleZoneAreaDetect()
     if (moving) {
       movables.forEach(m => (m.position.y -= speed))
     }
@@ -190,6 +221,8 @@ function animate() {
         break
       }
     }
+
+    battleZoneAreaDetect()
     if (moving) {
       movables.forEach(m => (m.position.x += speed))
     }
@@ -215,6 +248,8 @@ function animate() {
         break
       }
     }
+
+    battleZoneAreaDetect()
     if (moving) {
       movables.forEach(m => (m.position.x -= speed))
     }
