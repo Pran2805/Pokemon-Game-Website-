@@ -36,11 +36,20 @@ const collisionRect = ({ player, testBoundary }) => {
 const image = new Image()
 image.src = '../tile_assets/Pellet Town.png'
 
-const playerImage = new Image()
-playerImage.src = '../assets/Images/playerDown.png'
-
 const foregroundImage = new Image()
 foregroundImage.src = '../tile_assets/ForegroundObject.png'
+
+const playerUp = new Image()
+playerUp.src = '../assets/Images/playerUp.png'
+
+const playerDown = new Image()
+playerDown.src = '../assets/Images/playerDown.png'
+
+const playerRight = new Image()
+playerRight.src = '../assets/Images/playerRight.png'
+
+const playerLeft = new Image()
+playerLeft.src = '../assets/Images/playerLeft.png'
 
 let imagesLoaded = 0
 function checkAllImagesLoaded() {
@@ -69,13 +78,13 @@ const foreground = new Sprite({
 
 let player = null
 
-playerImage.onload = () => {
+playerDown.onload = () => {
   player = new Sprite({
     position: {
-      x: canvas.width / 2 - (playerImage.width / 4) / 2 - 50,
-      y: canvas.height / 2 - playerImage.height / 2 - 30
+      x: canvas.width / 2 - (playerDown.width / 4) / 2 - 50,
+      y: canvas.height / 2 - playerDown.height / 2 - 30
     },
-    image: playerImage,
+    image: playerDown,
     frames: {
       max: 4
     }
@@ -101,9 +110,6 @@ function animate() {
   background.draw(context)
   boundaries.forEach(boundary => {
     boundary.draw(context)
-    if (collisionRect({ player, testBoundary: boundary })) {
-      console.log('colliding')
-    }
   })
 
   if (player) {
@@ -111,105 +117,108 @@ function animate() {
   }
 
   foreground.draw(context)
- if (keys.w.pressed) {
-  let moving = true
-  for (let i = 0; i < boundaries.length; i++) {
-    const boundary = boundaries[i]
-    if (
-      collisionRect({
-        player: player,
-        testBoundary: {
-          ...boundary,
-          position: {
-            x: boundary.position.x,
-            y: boundary.position.y + speed
+  player.moving = false
+  if (keys.w.pressed) {
+    let moving = true
+    player.image = playerUp
+    for (let i = 0; i < boundaries.length; i++) {
+      player.moving = true
+      const boundary = boundaries[i]
+      if (
+        collisionRect({
+          player: player,
+          testBoundary: {
+            ...boundary,
+            position: {
+              x: boundary.position.x,
+              y: boundary.position.y + speed
+            }
           }
-        }
-      })
-    ) {
-      moving = false
-      break
+        })
+      ) {
+        moving = false
+        break
+      }
+    }
+    if (moving) {
+      movables.forEach(m => (m.position.y += speed))
+    }
+  } else if (keys.s.pressed) {
+    let moving = true
+    player.image = playerDown
+    for (let i = 0; i < boundaries.length; i++) {
+      player.moving = true
+      const boundary = boundaries[i]
+      if (
+        collisionRect({
+          player: player,
+          testBoundary: {
+            ...boundary,
+            position: {
+              x: boundary.position.x,
+              y: boundary.position.y - speed
+            }
+          }
+        })
+      ) {
+        moving = false
+        break
+      }
+    }
+    if (moving) {
+      movables.forEach(m => (m.position.y -= speed))
+    }
+  } else if (keys.a.pressed) {
+    let moving = true
+    player.image = playerLeft
+    for (let i = 0; i < boundaries.length; i++) {
+      player.moving = true
+      const boundary = boundaries[i]
+      if (
+        collisionRect({
+          player: player,
+          testBoundary: {
+            ...boundary,
+            position: {
+              x: boundary.position.x + speed,
+              y: boundary.position.y
+            }
+          }
+        })
+      ) {
+        moving = false
+        break
+      }
+    }
+    if (moving) {
+      movables.forEach(m => (m.position.x += speed))
+    }
+  } else if (keys.d.pressed) {
+    let moving = true
+    player.image = playerRight
+    for (let i = 0; i < boundaries.length; i++) {
+      player.moving = true
+      const boundary = boundaries[i]
+      if (
+        collisionRect({
+          player: player,
+          testBoundary: {
+            ...boundary,
+            position: {
+              x: boundary.position.x - speed,
+              y: boundary.position.y
+            }
+          }
+        })
+      ) {
+        moving = false
+        break
+      }
+    }
+    if (moving) {
+      movables.forEach(m => (m.position.x -= speed))
     }
   }
-  if (moving) {
-    movables.forEach(m => (m.position.y += speed))
-  }
-}
-
-if (keys.s.pressed) {
-  let moving = true
-  for (let i = 0; i < boundaries.length; i++) {
-    const boundary = boundaries[i]
-    if (
-      collisionRect({
-        player: player,
-        testBoundary: {
-          ...boundary,
-          position: {
-            x: boundary.position.x,
-            y: boundary.position.y - speed
-          }
-        }
-      })
-    ) {
-      moving = false
-      break
-    }
-  }
-  if (moving) {
-    movables.forEach(m => (m.position.y -= speed))
-  }
-}
-
-if (keys.a.pressed) {
-  let moving = true
-  for (let i = 0; i < boundaries.length; i++) {
-    const boundary = boundaries[i]
-    if (
-      collisionRect({
-        player: player,
-        testBoundary: {
-          ...boundary,
-          position: {
-            x: boundary.position.x + speed,
-            y: boundary.position.y
-          }
-        }
-      })
-    ) {
-      moving = false
-      break
-    }
-  }
-  if (moving) {
-    movables.forEach(m => (m.position.x += speed))
-  }
-}
-
-if (keys.d.pressed) {
-  let moving = true
-  for (let i = 0; i < boundaries.length; i++) {
-    const boundary = boundaries[i]
-    if (
-      collisionRect({
-        player: player,
-        testBoundary: {
-          ...boundary,
-          position: {
-            x: boundary.position.x - speed,
-            y: boundary.position.y
-          }
-        }
-      })
-    ) {
-      moving = false
-      break
-    }
-  }
-  if (moving) {
-    movables.forEach(m => (m.position.x -= speed))
-  }
-}
 
 }
 
@@ -219,6 +228,10 @@ window.addEventListener('keydown', (e) => {
     case 'a': keys.a.pressed = true; break
     case 's': keys.s.pressed = true; break
     case 'd': keys.d.pressed = true; break
+    case 'ArrowUp': keys.w.pressed = true; break
+    case 'ArrowLeft': keys.a.pressed = true; break
+    case 'ArrowDown': keys.s.pressed = true; break
+    case 'ArrowRight': keys.d.pressed = true; break
   }
 })
 
@@ -228,6 +241,10 @@ window.addEventListener('keyup', (e) => {
     case 'a': keys.a.pressed = false; break
     case 's': keys.s.pressed = false; break
     case 'd': keys.d.pressed = false; break
+    case 'ArrowUp': keys.w.pressed = false; break
+    case 'ArrowLeft': keys.a.pressed = false; break
+    case 'ArrowDown': keys.s.pressed = false; break
+    case 'ArrowRight': keys.d.pressed = false; break
   }
 })
 
