@@ -1,9 +1,6 @@
-
-
 // ===== Canvas Setup =====
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
-
 canvas.width = 1024
 canvas.height = 576
 
@@ -29,6 +26,14 @@ collisionsMap.forEach((row, i) => {
   })
 })
 
+const collisionRect = ({player, testBoundary}) =>{
+  return (
+      player.position.x + player.width >= testBoundary.position.x &&
+      player.position.x <= testBoundary.position.x + testBoundary.width &&
+      player.position.y + player.height >= testBoundary.position.y &&
+      player.position.y <= testBoundary.position.y + testBoundary.height
+  )
+}
 // ===== Load Images =====
 const image = new Image()
 image.src = '../tile_assets/Pellet Town.png'
@@ -102,12 +107,7 @@ function animate() {
   if (player) {
     player.draw(context)
 
-    if (
-      player.position.x + player.width >= testBoundary.position.x &&
-      player.position.x <= testBoundary.position.x + testBoundary.width &&
-      player.position.y + player.height >= testBoundary.position.y &&
-      player.position.y <= testBoundary.position.y + testBoundary.height
-    ) {
+    if (collisionRect({player, testBoundary: testBoundary})) {
       console.log('colliding')
     }
   }
