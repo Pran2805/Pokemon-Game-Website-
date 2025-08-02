@@ -26,12 +26,12 @@ collisionsMap.forEach((row, i) => {
   })
 })
 
-const collisionRect = ({player, testBoundary}) =>{
+const collisionRect = ({ player, testBoundary }) => {
   return (
-      player.position.x + player.width >= testBoundary.position.x &&
-      player.position.x <= testBoundary.position.x + testBoundary.width &&
-      player.position.y + player.height >= testBoundary.position.y &&
-      player.position.y <= testBoundary.position.y + testBoundary.height
+    player.position.x + player.width >= testBoundary.position.x &&
+    player.position.x <= testBoundary.position.x + testBoundary.width &&
+    player.position.y + player.height >= testBoundary.position.y &&
+    player.position.y <= testBoundary.position.y + testBoundary.height
   )
 }
 // ===== Load Images =====
@@ -72,8 +72,8 @@ let player = null
 playerImage.onload = () => {
   player = new Sprite({
     position: {
-      x: canvas.width / 2 - (playerImage.width / 4) / 2,
-      y: canvas.height / 2 - playerImage.height / 2
+      x: canvas.width / 2 - (playerImage.width / 4) / 2 - 50,
+      y: canvas.height / 2 - playerImage.height / 2 - 30
     },
     image: playerImage,
     frames: {
@@ -85,7 +85,7 @@ playerImage.onload = () => {
 
 image.onload = checkAllImagesLoaded
 
-const movables = [background, testBoundary, ...boundaries]
+const movables = [background, ...boundaries]
 
 // ===== Keys =====
 const keys = {
@@ -101,21 +101,118 @@ function animate() {
   context.clearRect(0, 0, canvas.width, canvas.height)
 
   background.draw(context)
-  testBoundary.draw(context)
-//   boundaries.forEach(b => b.draw(context))
+  // testBoundary.draw(context)
+  boundaries.forEach(boundary => {
+    boundary.draw(context)
+    if (collisionRect({ player, testBoundary: boundary })) {
+      console.log('colliding')
+    }
+  })
 
   if (player) {
     player.draw(context)
-
-    if (collisionRect({player, testBoundary: testBoundary})) {
-      console.log('colliding')
-    }
   }
 
-  if (keys.w.pressed) movables.forEach(m => (m.position.y += speed))
-  if (keys.s.pressed) movables.forEach(m => (m.position.y -= speed))
-  if (keys.a.pressed) movables.forEach(m => (m.position.x += speed))
-  if (keys.d.pressed) movables.forEach(m => (m.position.x -= speed))
+ if (keys.w.pressed) {
+  let moving = true
+  for (let i = 0; i < boundaries.length; i++) {
+    const boundary = boundaries[i]
+    if (
+      collisionRect({
+        player: player,
+        testBoundary: {
+          ...boundary,
+          position: {
+            x: boundary.position.x,
+            y: boundary.position.y + speed
+          }
+        }
+      })
+    ) {
+      moving = false
+      break
+    }
+  }
+  if (moving) {
+    movables.forEach(m => (m.position.y += speed))
+  }
+}
+
+if (keys.s.pressed) {
+  let moving = true
+  for (let i = 0; i < boundaries.length; i++) {
+    const boundary = boundaries[i]
+    if (
+      collisionRect({
+        player: player,
+        testBoundary: {
+          ...boundary,
+          position: {
+            x: boundary.position.x,
+            y: boundary.position.y - speed
+          }
+        }
+      })
+    ) {
+      moving = false
+      break
+    }
+  }
+  if (moving) {
+    movables.forEach(m => (m.position.y -= speed))
+  }
+}
+
+if (keys.a.pressed) {
+  let moving = true
+  for (let i = 0; i < boundaries.length; i++) {
+    const boundary = boundaries[i]
+    if (
+      collisionRect({
+        player: player,
+        testBoundary: {
+          ...boundary,
+          position: {
+            x: boundary.position.x + speed,
+            y: boundary.position.y
+          }
+        }
+      })
+    ) {
+      moving = false
+      break
+    }
+  }
+  if (moving) {
+    movables.forEach(m => (m.position.x += speed))
+  }
+}
+
+if (keys.d.pressed) {
+  let moving = true
+  for (let i = 0; i < boundaries.length; i++) {
+    const boundary = boundaries[i]
+    if (
+      collisionRect({
+        player: player,
+        testBoundary: {
+          ...boundary,
+          position: {
+            x: boundary.position.x - speed,
+            y: boundary.position.y
+          }
+        }
+      })
+    ) {
+      moving = false
+      break
+    }
+  }
+  if (moving) {
+    movables.forEach(m => (m.position.x -= speed))
+  }
+}
+
 }
 
 // ===== Keyboard Events =====

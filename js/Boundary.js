@@ -6,7 +6,7 @@ class Boundary {
     }
 
     draw(context) {
-        context.fillStyle = 'red'
+        // context.fillStyle = 'red'
         context.fillRect(this.position.x, this.position.y, this.width, this.height)
     }
 }
