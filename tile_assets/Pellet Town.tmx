@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.7.2" orientation="orthogonal" renderorder="right-down" width="70" height="40" tilewidth="12" tileheight="12" infinite="0" nextlayerid="27" nextobjectid="1">
+<map version="1.10" tiledversion="1.11.2" orientation="orthogonal" renderorder="right-down" width="70" height="40" tilewidth="12" tileheight="12" infinite="0" nextlayerid="27" nextobjectid="1">
  <editorsettings>
   <export target="../../pelletTown.json" format="json"/>
  </editorsettings>
  <tileset firstgid="1" source="pokemonStyleGameTileset.tsx"/>
- <tileset firstgid="1025" source="collisionTileset.tsx"/>
+ <tileset firstgid="1025" source="Collisions.tsx"/>
  <layer id="1" name="Ocean" width="70" height="40">
   <data encoding="csv">
 472,471,471,472,503,472,472,471,471,439,503,472,503,472,472,471,471,439,503,439,503,503,439,471,471,472,471,439,471,471,472,503,472,503,503,472,439,440,473,472,439,440,473,472,440,439,472,471,471,472,503,472,440,441,439,471,441,505,505,441,441,504,503,439,503,505,441,505,504,471,
@@ -535,7 +535,7 @@
 </data>
   </layer>
  </group>
- <layer id="20" name="Collisions" width="70" height="40" opacity="0.3">
+ <layer id="20" name="Collisions" width="70" height="40" visible="0" opacity="0.58">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -579,7 +579,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="26" name="Battle Zones" width="70" height="40" opacity="0.5">
+ <layer id="26" name="Battle Zones" width="70" height="40" visible="0" opacity="0.5">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -623,7 +623,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer id="22" name="Foreground Objects" width="70" height="40">
+ <layer id="22" name="Foreground Objects" width="70" height="40" visible="0">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

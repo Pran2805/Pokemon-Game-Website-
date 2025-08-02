@@ -1,4 +1,7 @@
-const mapPosWidth = -425
-const mapPosHeight = -390
+const mapPosWidth = -790
+const mapPosHeight = -650
 
 const speed = 3
+
+const widthMap = 48;
+const heightMap = 48;

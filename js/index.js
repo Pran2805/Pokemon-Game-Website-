@@ -1,89 +1,139 @@
+
+
+// ===== Canvas Setup =====
 const canvas = document.querySelector('canvas')
 const context = canvas.getContext('2d')
 
 canvas.width = 1024
 canvas.height = 576
 
-const image = new Image()
-const playerImage = new Image()
+// ===== Collisions Mapping =====
+const collisionsMap = []
+for (let i = 0; i < collisions.length; i += 70) {
+  collisionsMap.push(collisions.slice(i, i + 70))
+}
 
+const boundaries = []
+collisionsMap.forEach((row, i) => {
+  row.forEach((symbol, j) => {
+    if (symbol === 1025) {
+      boundaries.push(
+        new Boundary({
+          position: {
+            x: j * 48 + mapPosWidth,
+            y: i * 48 + mapPosHeight
+          }
+        })
+      )
+    }
+  })
+})
+
+// ===== Load Images =====
+const image = new Image()
 image.src = '../tile_assets/Pellet Town.png'
+
+const playerImage = new Image()
 playerImage.src = '../assets/Images/playerDown.png'
 
-// Track image loading
 let imagesLoaded = 0
 function checkAllImagesLoaded() {
-    imagesLoaded++
-    if (imagesLoaded === 2) {
-        animate()
+  imagesLoaded++
+  if (imagesLoaded === 2 && player) {
+    animate()
+  }
+}
+
+// ===== Background Sprite =====
+const background = new Sprite({
+  position: {
+    x: mapPosWidth,
+    y: mapPosHeight
+  },
+  image: image
+})
+
+// ===== Test Boundary (Optional) =====
+const testBoundary = new Boundary({
+  position: {
+    x: 400,
+    y: 400
+  }
+})
+
+// ===== Player Setup =====
+let player = null
+
+playerImage.onload = () => {
+  player = new Sprite({
+    position: {
+      x: canvas.width / 2 - (playerImage.width / 4) / 2,
+      y: canvas.height / 2 - playerImage.height / 2
+    },
+    image: playerImage,
+    frames: {
+      max: 4
     }
+  })
+  checkAllImagesLoaded()
 }
 
 image.onload = checkAllImagesLoaded
-playerImage.onload = checkAllImagesLoaded
 
-const background = new Sprite({
-    position: {
-        x: mapPosWidth,
-        y: mapPosHeight
-    },
-    image: image
-})
+const movables = [background, testBoundary, ...boundaries]
 
+// ===== Keys =====
 const keys = {
-    w: { pressed: false },
-    a: { pressed: false },
-    s: { pressed: false },
-    d: { pressed: false }
+  w: { pressed: false },
+  a: { pressed: false },
+  s: { pressed: false },
+  d: { pressed: false }
 }
 
+// ===== Animation Loop =====
 function animate() {
-    window.requestAnimationFrame(animate)
-    context.fillStyle = '#fff'
-    context.fillRect(0, 0, canvas.width, canvas.height)
+  requestAnimationFrame(animate)
+  context.clearRect(0, 0, canvas.width, canvas.height)
 
-    background.draw(context)
+  background.draw(context)
+  testBoundary.draw(context)
+//   boundaries.forEach(b => b.draw(context))
 
-    context.drawImage(
-        playerImage,
-        0,
-        0,
-        playerImage.width / 4,
-        playerImage.height,
-        canvas.width / 2 - (playerImage.width / 4) / 2,
-        canvas.height / 2 - playerImage.height / 2,
-        playerImage.width / 4,
-        playerImage.height
-    )
-    if(keys.w.pressed){
-        background.position.y += speed
-    }
-    if(keys.s.pressed){
-        background.position.y -= speed
-    }
-    if(keys.a.pressed){
-        background.position.x += speed
-    }
-    if(keys.d.pressed){
-        background.position.x -= speed
-    }
+  if (player) {
+    player.draw(context)
 
-    
+    if (
+      player.position.x + player.width >= testBoundary.position.x &&
+      player.position.x <= testBoundary.position.x + testBoundary.width &&
+      player.position.y + player.height >= testBoundary.position.y &&
+      player.position.y <= testBoundary.position.y + testBoundary.height
+    ) {
+      console.log('colliding')
+    }
+  }
+
+  if (keys.w.pressed) movables.forEach(m => (m.position.y += speed))
+  if (keys.s.pressed) movables.forEach(m => (m.position.y -= speed))
+  if (keys.a.pressed) movables.forEach(m => (m.position.x += speed))
+  if (keys.d.pressed) movables.forEach(m => (m.position.x -= speed))
 }
 
+// ===== Keyboard Events =====
 window.addEventListener('keydown', (e) => {
-    switch (e.key) {
-        case 'w': keys.w.pressed = true; break
-        case 'a': keys.a.pressed = true; break
-        case 's': keys.s.pressed = true; break
-        case 'd': keys.d.pressed = true; break
-    }
+  switch (e.key) {
+    case 'w': keys.w.pressed = true; break
+    case 'a': keys.a.pressed = true; break
+    case 's': keys.s.pressed = true; break
+    case 'd': keys.d.pressed = true; break
+  }
 })
+
 window.addEventListener('keyup', (e) => {
-    switch (e.key) {
-        case 'w': keys.w.pressed = false;; break
-        case 'a': keys.a.pressed = false; break
-        case 's': keys.s.pressed = false; break
-        case 'd': keys.d.pressed = false; break
-    }
+  switch (e.key) {
+    case 'w': keys.w.pressed = false; break
+    case 'a': keys.a.pressed = false; break
+    case 's': keys.s.pressed = false; break
+    case 'd': keys.d.pressed = false; break
+  }
 })
+
